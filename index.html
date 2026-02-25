@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" style="background:#1a1a1a;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MangaList</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f1115',
+                        darkSurface: '#181a20',
+                        darkBorder: '#2a2d36',
+                        lightBg: '#f3f4f6',
+                        lightSurface: '#ffffff',
+                        lightBorder: '#e5e7eb',
+                        accent: '#3b82f6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body
+    class="bg-[#f0f0f0] text-gray-900 transition-colors duration-300 antialiased font-sans flex flex-col overflow-hidden h-screen w-screen">
+
+    <!-- Top Navigation -->
+    <header class="nav-header">
+        <div class="nav-content">
+            <div class="flex items-center gap-6">
+                <h1 class="text-3xl font-['Oswald'] tracking-tight font-extrabold uppercase text-white">
+                    MANGALIST <span class="text-gray-400 text-sm ml-1 align-middle">▼</span>
+                </h1>
+                <div
+                    class="hidden md:flex items-center gap-1 text-[10px] font-bold tracking-widest text-[#777] uppercase mt-2">
+                    SHOWING: <span class="text-black ml-1">ALL</span> <span
+                        class="bg-gray-200 text-black px-1.5 py-0.5 rounded ml-1" id="manga-count">36 ▼</span>
+                </div>
+            </div>
+
+            <div
+                class="flex items-center space-x-6 text-[11px] font-['Oswald'] font-bold tracking-widest uppercase text-white mt-2">
+                <button
+                    class="hover:text-gray-500 transition line-through decoration-gray-400 text-gray-500 flex items-center gap-1"><svg
+                        class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                        </path>
+                    </svg></button>
+                <button class="hover:text-gray-500 transition flex items-center gap-1"><svg class="w-4 h-4" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg></button>
+                <button class="hover:text-gray-300 transition flex items-center gap-1">SEARCH</button>
+                <button class="hover:text-gray-300 transition flex items-center gap-1">A &rarr; Z</button>
+                <button class="hover:text-gray-300 transition flex items-center gap-1">YEAR</button>
+                <button class="hover:text-gray-300 transition flex items-center gap-1 text-red-400">+ ADD</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar & Main Grid Area -->
+    <div class="flex h-full w-full" style="background:#1a1a1a; min-height: 100vh;">
+
+        <!-- Vertical Left Text Sidebar (fixed, non-overlapping) -->
+        <div class="fixed left-2 top-0 bottom-0 w-16 z-40 flex items-center justify-center pointer-events-none"
+            style="background: transparent; padding-left: 8px;">
+            <div
+                class="-rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.2em] uppercase text-gray-500 flex items-center gap-4">
+                <span class="cursor-pointer hover:text-white transition pointer-events-auto">&lt; READING</span>
+                <span class="text-gray-700">|</span>
+                <span class="cursor-pointer text-white transition pointer-events-auto border-b border-white pb-0.5">=
+                    PLAN TO READ</span>
+            </div>
+        </div>
+
+        <!-- Main Interactive Grid -->
+        <main class="perspective-grid-container flex-grow relative" style="padding-left: 64px;">
+            <div id="manga-grid" class="perspective-grid mx-auto"
+                style="display: grid; grid-template-columns: repeat(4, 230px); gap: 24px 20px; justify-content: center; padding: 0 32px;">
+                <!-- Grid Items Will Be Injected By JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 3D Book Modal Overlay -->
+    <div id="book-modal-overlay"
+        class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-500 flex items-center justify-center p-4 lg:p-10 perspective-[2000px]">
+        <!-- The Book Container -->
+        <div id="book-modal"
+            class="relative w-full max-w-[1100px] h-[80vh] min-h-[600px] max-h-[850px] transform-style-3d flex justify-center items-center closed transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+
+            <!-- Book Base (White Wrap / Edge) -->
+            <div
+                class="absolute inset-0 bg-white rounded flex p-1 shadow-2xl transition-all duration-700 border border-white/20">
+
+                <!-- Left Pane (Cover & Metadata) -->
+                <div
+                    class="w-1/2 h-full bg-[#181818] rounded-l flex flex-col items-center pt-10 px-6 overflow-hidden relative border-r border-black">
+
+                    <!-- Inner cover image framed inside the left page -->
+                    <div class="w-full aspect-[2/3] max-w-[280px] relative bg-cover bg-center border-[8px] border-white shadow-2xl mb-4"
+                        id="modal-inner-cover"></div>
+
+                    <button
+                        class="px-3 py-1.5 border hover:bg-white hover:text-black transition border-white/20 text-white/50 rounded text-[10px] font-['Oswald'] font-bold uppercase tracking-widest flex items-center gap-2 mb-8">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        Change Cover
+                    </button>
+
+                    <!-- Metadata Grid -->
+                    <div class="w-full max-w-[320px] grid grid-cols-2 gap-px bg-[#0a0a0a] border border-[#333] mb-auto">
+                        <div class="bg-[#111] p-2 flex flex-col">
+                            <span class="text-[9px] text-[#555] font-bold tracking-widest mb-1">YEAR</span>
+                            <span class="text-[11px] text-[#ccc] font-bold" id="modal-year">2012</span>
+                        </div>
+                        <div class="bg-[#111] p-2 flex flex-col">
+                            <span class="text-[9px] text-[#555] font-bold tracking-widest mb-1">AUTHOR</span>
+                            <span class="text-[11px] text-[#ccc] font-bold truncate block w-full" id="modal-author"
+                                title="">Asou Shuuichi</span>
+                        </div>
+                        <div class="bg-[#111] p-2 flex flex-col col-span-2">
+                            <span class="text-[9px] text-[#555] font-bold tracking-widest mb-1">GENRE</span>
+                            <span
+                                class="text-[11px] text-[#ccc] font-bold uppercase tracking-wide truncate block w-full"
+                                id="modal-genres" title="">COMEDY, SLICE OF LIFE, SUPERNATURAL</span>
+                        </div>
+                    </div>
+
+                    <!-- Block Footer -->
+                    <div class="w-full max-w-[320px] mb-6 flex flex-col">
+                        <span class="text-[9px] text-[#555] font-bold tracking-widest mb-2">DATABASES &
+                            ACTIONS</span>
+                        <div class="flex gap-2">
+                            <button
+                                class="flex-1 bg-white/5 hover:bg-white/10 text-[#aaa] py-2 text-[10px] font-bold tracking-wider rounded-sm transition">MAL</button>
+                            <button
+                                class="flex-1 bg-white/5 hover:bg-white/10 text-[#aaa] py-2 text-[10px] font-bold tracking-wider rounded-sm transition">DEX</button>
+                            <button
+                                class="flex-1 bg-white/5 hover:bg-white/10 text-[#aaa] py-2 text-[10px] font-bold tracking-wider rounded-sm transition">KITSU</button>
+                            <button
+                                class="flex-1 bg-white/5 hover:bg-white/10 text-[#aaa] py-2 text-[10px] font-bold tracking-wider rounded-sm transition">SYNC</button>
+                            <button
+                                class="px-3 bg-red-900/20 hover:bg-red-900/40 text-red-500 py-2 rounded-sm transition"><svg
+                                    class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                    </path>
+                                </svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Pane (Content & Tracking) -->
+                <div
+                    class="w-1/2 h-full bg-[#111111] rounded-r flex flex-col pt-10 px-8 relative overflow-y-auto custom-scrollbar">
+                    <!-- Close Button -->
+                    <button id="close-modal-btn" onclick="closeModal()"
+                        class="absolute top-3 right-3 w-10 h-10 rounded-full border border-white/20 hover:border-white/60 flex items-center justify-center text-white/60 hover:text-white transition z-20 hover:bg-white/10">
+                        <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Header Title -->
+                    <h2 class="text-2xl font-['Inter'] font-extrabold uppercase tracking-tight text-white mb-1 pr-6"
+                        id="modal-title">THE DISASTROUS LIFE OF...</h2>
+                    <!-- Author · Year subtitle in pink -->
+                    <p class="text-[11px] font-bold tracking-widest mb-1 pr-6" id="modal-author-year"
+                        style="color:#ff6b9d"></p>
+                    <!-- Genre -->
+                    <p class="text-[10px] font-bold tracking-wider mb-5 pr-6" id="modal-genres" style="color:#ff6b9d;">
+                    </p>
+
+                    <div class="flex gap-6 mb-6">
+                        <!-- Shelf Dropdown -->
+                        <div class="flex-1">
+                            <label class="block text-[9px] text-[#555] font-bold tracking-widest mb-2">SHELF</label>
+                            <div class="relative">
+                                <select id="modal-status"
+                                    class="w-full appearance-none bg-transparent border border-[#333] text-[11px] font-bold text-white px-3 py-2 rounded focus:outline-none focus:border-white/50 cursor-pointer">
+                                    <option value="Reading" class="bg-[#1a1a1a] text-white">READING</option>
+                                    <option value="Completed" class="bg-[#1a1a1a] text-white">COMPLETED</option>
+                                    <option value="Plan to Read" class="bg-[#1a1a1a] text-white">PLAN TO READ
+                                    </option>
+                                </select>
+                                <div
+                                    class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-[#555]">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slanted Rating Blocks -->
+                        <div class="flex-1">
+                            <label class="block text-[9px] text-[#555] font-bold tracking-widest mb-2">RATING /
+                                10</label>
+                            <div class="flex gap-0.5 mt-1" id="slanted-rating-container">
+                                <!-- Blocks injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Section (Chapters & Volumes) -->
+                    <div class="flex justify-between items-end mb-4 pt-4 border-t border-[#333]">
+                        <span class="text-[9px] text-[#555] font-bold tracking-widest">PROGRESS</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[8px] text-[#333] tracking-wider uppercase">CURRENT / TOTAL</span>
+                            <button
+                                class="bg-white/5 hover:bg-white/20 text-white text-[9px] px-3 py-1 font-bold tracking-widest rounded transition">MARK
+                                COMPLETE</button>
+                        </div>
+                    </div>
+
+                    <!-- Chapters Row -->
+                    <div class="flex items-center justify-between mb-4 border-b border-[#333] pb-2 relative group">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                </path>
+                            </svg>
+                            <span class="text-[11px] font-bold text-white uppercase tracking-wider">CHAPTERS</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button class="text-[#555] hover:text-white">&laquo;</button>
+                            <div class="text-[20px] font-extrabold w-10 text-right bg-transparent border-0"
+                                id="modal-chapters-read-display" style="color:#fbbf24">5</div>
+                            <span class="text-[#555] font-bold">/</span>
+                            <div class="text-[14px] font-bold text-[#888] w-8 text-left" id="modal-chapters-total">
+                                290</div>
+                            <button class="text-[#555] hover:text-white">&raquo;</button>
+                        </div>
+                        <!-- Thin green progress bar (absolute bottom) -->
+                        <div class="absolute bottom-[-1px] left-0 h-[2px] bg-[#00e5ff]" id="modal-chapters-bar"
+                            style="width: 10%"></div>
+                    </div>
+
+                    <!-- Volumes Row -->
+                    <div class="flex items-center justify-between mb-6 border-b border-[#333] pb-2 relative group">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                            <span class="text-[11px] font-bold text-white uppercase tracking-wider">VOLUMES</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button class="text-[#555] hover:text-white">&laquo;</button>
+                            <div class="text-[20px] font-extrabold w-10 text-right bg-transparent border-0"
+                                id="modal-volumes-read-display" style="color:#fbbf24">2</div>
+                            <span class="text-[#555] font-bold">/</span>
+                            <div class="text-[14px] font-bold text-[#888] w-8 text-left" id="modal-volumes-total">2
+                            </div>
+                            <button class="text-[#555] hover:text-white">&raquo;</button>
+                        </div>
+                        <!-- Thin green progress bar (absolute bottom) -->
+                        <div class="absolute bottom-[-1px] left-0 h-[2px] bg-[#00e5ff]" id="modal-volumes-bar"
+                            style="width: 100%"></div>
+                    </div>
+
+                    <!-- Synopsis -->
+                    <div class="flex flex-col mb-4">
+                        <span class="text-[9px] text-[#555] font-bold tracking-widest mb-2 uppercase">Synopsis</span>
+                        <p class="text-[#999] text-sm leading-relaxed" id="modal-synopsis"></p>
+                    </div>
+
+                    <!-- Personal Notes -->
+                    <div class="flex flex-col mb-8 flex-grow">
+                        <span
+                            class="text-[9px] text-[#555] font-bold tracking-widest mb-2 flex items-center gap-1 uppercase">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                </path>
+                            </svg>
+                            Personal Notes
+                        </span>
+                        <textarea id="modal-notes"
+                            class="w-full h-full min-h-[100px] bg-transparent border border-[#333] rounded p-3 text-sm text-[#ccc] focus:outline-none focus:border-white/50 resize-none"
+                            placeholder="Your thoughts, theories, favorite moments..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flapping Page (The Left Cover) -->
+            <div
+                class="book-cover origin-left absolute left-0 w-1/2 h-full z-20 transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform-style-3d closed">
+                <!-- Front of the Cover (Image) -->
+                <div class="cover-front absolute inset-0 bg-cover bg-center rounded-l-lg border border-black/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] backface-hidden"
+                    id="modal-cover">
+                    <!-- Lighting/Spine Overlay -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-l from-black/50 via-transparent to-black/10 mix-blend-multiply pointer-events-none rounded-l-lg">
+                    </div>
+                    <div
+                        class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-black/60 to-transparent pointer-events-none rounded-l-lg">
+                    </div>
+                </div>
+
+                <!-- Back of the Cover (Inside Left Page) - pure black to just disappear over the dark left pane when opening -->
+                <div class="cover-back absolute inset-0 bg-black backface-hidden rotate-y-180"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Mock Data State
+        let mangaData = [
+            {
+                id: 1,
+                title: "Jujutsu Kaisen",
+                author: "Gege Akutami",
+                year: 2018,
+                genres: ["Action", "Dark Fantasy", "Supernatural"],
+                status: "Reading",
+                chaptersRead: 150,
+                totalChapters: 271,
+                volumesRead: 16,
+                totalVolumes: 30,
+                rating: 9,
+                synopsis: "Yuji Itadori, a kind-hearted teenager, joins his school's Occult Club for fun, but discovers that its members are actual sorcerers who can manipulate the energy between beings for their own use. He swallows a rotting finger belonging to a powerful Curse to protect his friends, becoming its host and entering the dangerous world of Jujutsu Sorcerers.",
+                coverUrl: "img/jjk.webp"
+            },
+            {
+                id: 2,
+                title: "Vinland Saga",
+                author: "Makoto Yukimura",
+                year: 2005,
+                genres: ["Historical", "Action", "Adventure"],
+                status: "Plan to Read",
+                chaptersRead: 0,
+                totalChapters: 200,
+                volumesRead: 0,
+                totalVolumes: 27,
+                rating: 10,
+                synopsis: "Young Thorfinn grew up listening to the stories of old sailors that had traveled the ocean and reached the place of legend, Vinland. It's said to be warm and fertile, a place where there would be no need for fighting—not at all like the frozen village in Iceland where he was born, and certainly not like his current life as a mercenary.",
+                coverUrl: "img/vinland.webp"
+            },
+            {
+                id: 3,
+                title: "Vagabond",
+                author: "Takehiko Inoue",
+                year: 1998,
+                genres: ["Historical", "Martial Arts", "Seinen"],
+                status: "Completed",
+                chaptersRead: 327,
+                totalChapters: 327,
+                volumesRead: 37,
+                totalVolumes: 37,
+                rating: 10,
+                synopsis: "In 16th century Japan, Shinmen Takezou is a wild, rough young man, in both his appearance and his actions. His aggressive nature has won him the reproach and fear of his village. Running away from home, he embarks on an incredible journey to become the greatest swordsman in the world, taking the legendary name of Miyamoto Musashi.",
+                coverUrl: "img/Vagabond.webp"
+            },
+            {
+                id: 4,
+                title: "Berserk",
+                author: "Kentaro Miura",
+                year: 1989,
+                genres: ["Dark Fantasy", "Action", "Tragedy"],
+                status: "Reading",
+                chaptersRead: 250,
+                totalChapters: 364,
+                volumesRead: 25,
+                totalVolumes: 41,
+                rating: 10,
+                synopsis: "Guts, a former mercenary now known as the \"Black Swordsman,\" is out for revenge. After a tumultuous childhood, he finally finds someone he respects and believes he can trust, only to have everything fall apart. Bound by a demonic brand, he must constantly battle monsters and demons while hunting the man who betrayed him.",
+                coverUrl: "img/berserk1.webp"
+            }
+        ];
+
+        let gridContainer = null;
+
+        function renderGrid() {
+            if (!gridContainer) gridContainer = document.getElementById('manga-grid');
+            if (!gridContainer) return;
+
+            gridContainer.innerHTML = '';
+            mangaData.forEach(manga => {
+                // Status class formatting
+                const statusClass = manga.status.includes('Plan') ? 'status-Plan' : `status-${manga.status}`;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'manga-card-wrapper relative aspect-[2/3] cursor-pointer group';
+                wrapper.onclick = () => openModal(manga.id);
+
+                const card = document.createElement('div');
+                card.className = 'manga-card w-full h-full relative overflow-hidden bg-gray-200 dark:bg-gray-800';
+
+                const chPct = manga.totalChapters > 0 ? (manga.chaptersRead / manga.totalChapters) * 100 : 0;
+                const firstGenre = manga.genres[0] || '';
+
+                // 3D BOOK card structure
+                card.innerHTML = `
+            <div class="manga-book-3d">
+                <!-- LEFT FACE: Dark spine -->
+                <div class="book-spine-face"></div>
+
+                <!-- RIGHT FACE: Lined pages -->
+                <div class="book-pages-face"></div>
+
+                <!-- FRONT FACE: Cover image + overlays -->
+                <div class="book-cover-face">
+                    <img src="${manga.coverUrl}" alt="${manga.title}"
+                        class="w-full h-full object-cover block" draggable="false" />
+
+                    <!-- Glare overlay -->
+                    <div class="book-glare"></div>
+
+                    <!-- Rating badge (top right) -->
+                    <div class="absolute top-0 left-0 right-0 flex justify-end p-2 z-10">
+                        <div class="bg-[#ffd700] text-black text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+                            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            ${manga.rating ?? 'N/A'}
+                        </div>
+                    </div>
+
+                    <!-- Bottom overlay: genre + title + progress -->
+                    <div class="absolute bottom-0 left-0 right-0 px-3 pb-2 pt-10 flex flex-col z-10"
+                        style="background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.8) 50%, transparent 100%);">
+                        <div class="text-[8px] tracking-widest font-bold uppercase mb-1"
+                            style="color: rgba(255,255,255,0.5)">${firstGenre}</div>
+                        <div class="flex justify-between items-end mb-1.5">
+                            <h3 class="text-white text-sm font-extrabold leading-tight line-clamp-2 flex-1"
+                                style="font-family: Inter, sans-serif;">${manga.title}</h3>
+                            <div class="bg-[#e43b3b] text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm ml-2 flex-shrink-0 tracking-wider">
+                                CH ${manga.chaptersRead}
+                            </div>
+                        </div>
+                        <!-- Cyan progress bar -->
+                        <div class="h-[2px] rounded-full overflow-hidden" style="background: rgba(255,255,255,0.12)">
+                            <div class="h-full rounded-full" style="width: ${chPct}%; background: #00e5ff;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+                // Book hover effect — rotates between -28deg (showing spine) and -8deg (more frontal)
+                const bookEl = card.querySelector('.manga-book-3d');
+                const glareEl = card.querySelector('.book-glare');
+
+                wrapper.addEventListener('mouseenter', () => {
+                    bookEl.style.transition = 'transform 0.3s ease';
+                });
+
+                wrapper.addEventListener('mousemove', (e) => {
+                    const rect = wrapper.getBoundingClientRect();
+                    const xRel = (e.clientX - rect.left) / rect.width;   // 0→1
+                    const yRel = (e.clientY - rect.top) / rect.height;   // 0→1
+
+                    // As mouse moves right → book opens (less negative angle)
+                    const rotY = -28 + xRel * 20;
+                    // Slight X tilt for realism
+                    const rotX = 4 - yRel * 8;
+
+                    bookEl.style.transition = 'none';
+                    bookEl.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+
+                    // Move glare with mouse
+                    glareEl.style.opacity = '0.7';
+                    glareEl.style.background = `radial-gradient(circle at ${xRel * 100}% ${yRel * 100}%, rgba(255,255,255,0.28) 0%, transparent 65%)`;
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    bookEl.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
+                    bookEl.style.transform = 'rotateY(-22deg)';
+                    glareEl.style.opacity = '0';
+                });
+
+                wrapper.appendChild(card);
+                gridContainer.appendChild(wrapper);
+            });
+        }
+
+        // Modal Logic & Animation
+        const modalOverlay = document.getElementById('book-modal-overlay');
+        const bookContainer = document.getElementById('book-modal');
+        const bookCover = document.querySelector('.book-cover');
+        const bookRight = document.querySelector('.book-right');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        let currentMangaId = null;
+
+        function openModal(id) {
+            const manga = mangaData.find(m => m.id === id);
+            if (!manga) return;
+            currentMangaId = id;
+
+            // Populate Cover Data
+            document.getElementById('modal-cover').style.backgroundImage = `url('${manga.coverUrl}')`;
+            document.getElementById('modal-inner-cover').style.backgroundImage = `url('${manga.coverUrl}')`;
+
+            // Populate Right Pane Data
+            document.getElementById('modal-title').textContent = manga.title.toUpperCase();
+            // Author · Year subtitle (right pane)
+            const authorYearEl = document.getElementById('modal-author-year');
+            if (authorYearEl) authorYearEl.textContent = `${manga.author.toUpperCase()} · ${manga.year}`;
+            // Author in left pane
+            const authorEl = document.getElementById('modal-author');
+            if (authorEl) authorEl.textContent = manga.author.toUpperCase();
+            const yearEl = document.getElementById('modal-year');
+            if (yearEl) yearEl.textContent = manga.year;
+
+            // Genres - in pink/coral color (below subtitle)
+            const genresEl = document.getElementById('modal-genres');
+            if (genresEl) {
+                genresEl.textContent = manga.genres.map(g => g.toUpperCase()).join(' · ');
+            }
+
+            // Status / Shelf
+            document.getElementById('modal-status').value = manga.status;
+
+            // Rating Slanted Blocks
+            const ratingContainer = document.getElementById('slanted-rating-container');
+            if (ratingContainer) {
+                ratingContainer.innerHTML = '';
+                const maxScore = 10;
+                const currentScore = parseInt(manga.rating) || 0;
+                for (let i = 1; i <= maxScore; i++) {
+                    const block = document.createElement('div');
+                    // The slanted box look
+                    block.className = `h-6 flex-1 transform -skew-x-[15deg] border border-[#333] transition-colors ${i <= currentScore ? 'bg-[#ffd700]' : 'bg-[#111] hover:bg-[#222]'}`;
+                    ratingContainer.appendChild(block);
+                }
+            }
+
+            // Chapters Progress
+            const chReadDisplay = document.getElementById('modal-chapters-read-display');
+            if (chReadDisplay) chReadDisplay.textContent = manga.chaptersRead;
+            const chTotalDisplay = document.getElementById('modal-chapters-total');
+            if (chTotalDisplay) chTotalDisplay.textContent = manga.totalChapters;
+            const chapterProgress = manga.totalChapters > 0 ? (manga.chaptersRead / manga.totalChapters) * 100 : 0;
+            const chBar = document.getElementById('modal-chapters-bar');
+            if (chBar) chBar.style.width = `${chapterProgress}%`;
+
+            // Volumes Progress
+            const volReadDisplay = document.getElementById('modal-volumes-read-display');
+            if (volReadDisplay) volReadDisplay.textContent = manga.volumesRead;
+            const volTotalDisplay = document.getElementById('modal-volumes-total');
+            if (volTotalDisplay) volTotalDisplay.textContent = manga.totalVolumes;
+            const volumeProgress = manga.totalVolumes > 0 ? (manga.volumesRead / manga.totalVolumes) * 100 : 0;
+            const volBar = document.getElementById('modal-volumes-bar');
+            if (volBar) volBar.style.width = `${volumeProgress}%`;
+
+            // Synopsis & Notes
+            const synopsisDisplay = document.getElementById('modal-synopsis');
+            if (synopsisDisplay) synopsisDisplay.textContent = manga.synopsis;
+            const notesDisplay = document.getElementById('modal-notes');
+            if (notesDisplay) notesDisplay.value = manga.notes || '';
+
+            // Animate In:
+            bookContainer.classList.add('closed');
+            bookContainer.classList.remove('open');
+            bookCover.classList.add('closed');
+            bookCover.classList.remove('open');
+            // Ensure bookRight DOM element exists before trying to modify classes.
+            // In the new layout there isn't a specific 'book-right' that animates separately from 'book-modal' and 'book-cover',
+            // but we'll try to find it just in case, or gracefully ignore it.
+            const rightPane = document.querySelector('.book-right');
+            if (rightPane) {
+                rightPane.classList.add('closed-content');
+            }
+
+            // Display Overlay
+            modalOverlay.classList.remove('pointer-events-none');
+
+            requestAnimationFrame(() => {
+                // Fade in backdrop
+                modalOverlay.classList.remove('opacity-0');
+
+                // Trigger Book Opening
+                setTimeout(() => {
+                    bookContainer.classList.remove('closed');
+                    bookContainer.classList.add('open');
+                    bookCover.classList.remove('closed');
+                    bookCover.classList.add('open');
+                    if (rightPane) {
+                        rightPane.classList.remove('closed-content');
+                    }
+                }, 50);
+            });
+        }
+
+        function closeModal() {
+            // Reverse Book Animation
+            bookContainer.classList.remove('open');
+            bookContainer.classList.add('closed');
+            bookCover.classList.remove('open');
+            bookCover.classList.add('closed');
+            const rightPane = document.querySelector('.book-right');
+            if (rightPane) {
+                rightPane.classList.add('closed-content');
+            }
+
+            setTimeout(() => {
+                modalOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    modalOverlay.classList.add('pointer-events-none');
+                    currentMangaId = null;
+                }, 500);
+            }, 400);
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            // Only close if clicking the actual backdrop, not inside the book modal itself
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        // Form Syncing (Update mock data on change)
+        function syncData(field, val) {
+            if (!currentMangaId) return;
+            const manga = mangaData.find(m => m.id === currentMangaId);
+            if (manga) {
+                if (field === 'status') manga.status = val;
+                else manga[field] = parseInt(val) || 0;
+
+                // Soft re-render grid in background to update the status badges instantly
+                renderGrid();
+            }
+        }
+
+        document.getElementById('modal-status').addEventListener('change', (e) => syncData('status', e.target.value));
+        // Progress inputs removed, will add increment logic later.
+        // Bootstrap the app
+        renderGrid();
+
+    </script>
+</body>
+
+</html>

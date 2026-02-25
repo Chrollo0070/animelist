@@ -1,0 +1,261 @@
+/* Custom Typography Utilities */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;500;700;800&family=Teko:wght@600;700&display=swap');
+
+/* Base Theme — Dark Like Demo */
+body {
+    background-color: #1a1a1a;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    color: #fff;
+}
+
+/* 3D Utilities */
+.transform-style-3d {
+    transform-style: preserve-3d;
+}
+
+/* --- Navbar Styles --- */
+.nav-header {
+    background: linear-gradient(to bottom, rgba(20, 20, 20, 0.97) 0%, rgba(20, 20, 20, 0.8) 70%, transparent 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.nav-content {
+    width: 100%;
+    max-width: 1600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 40px;
+    pointer-events: auto;
+}
+
+/* --- 3D Grid Perspective --- */
+.perspective-grid-container {
+    perspective: 1800px;
+    perspective-origin: 50% 0%;
+    height: 100vh;
+    width: 100vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 70px;
+}
+
+.perspective-grid {
+    /* Match demo: forward tilt like looking down at a shelf */
+    transform: rotateX(18deg);
+    transform-style: preserve-3d;
+    transform-origin: 50% 0%;
+    padding-bottom: 150px;
+    margin-top: 20px;
+}
+
+/* === 3D BOOK EFFECT === */
+
+/* The card wrapper just sets perspective context */
+.manga-card-wrapper {
+    perspective: 700px;
+    perspective-origin: left center;
+    transition: transform 0.3s ease-out;
+    position: relative;
+}
+
+/* The outer card div is now just a transparent container */
+.manga-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* The actual 3D book object */
+.manga-book-3d {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(-22deg);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+}
+
+/* === SPINE — Left face of the book === */
+.book-spine-face {
+    position: absolute;
+    left: 0;
+    top: 1%;
+    height: 98%;
+    width: 28px;
+    /* Book thickness */
+    transform: translateX(-27px) rotateY(-90deg);
+    transform-origin: right center;
+    background: linear-gradient(to right,
+            #0a0a0a 0%,
+            #2a2a2a 30%,
+            #1a1a1a 60%,
+            #0d0d0d 100%);
+    border-radius: 2px 0 0 2px;
+    /* subtle sheen line on spine */
+    box-shadow: inset 2px 0 5px rgba(255, 255, 255, 0.06),
+        inset -2px 0 8px rgba(0, 0, 0, 0.5);
+}
+
+/* === PAGES — Right face of the book === */
+.book-pages-face {
+    position: absolute;
+    right: 0;
+    top: 1%;
+    height: 98%;
+    width: 22px;
+    /* Page thickness (thinner than spine) */
+    transform: translateX(21px) rotateY(90deg);
+    transform-origin: left center;
+    background: repeating-linear-gradient(to top,
+            #c4c4c4 0px,
+            #efefef 1px,
+            #e2e2e2 1px,
+            #f8f8f8 3px);
+    border-radius: 0 2px 2px 0;
+    box-shadow: inset -3px 0 8px rgba(0, 0, 0, 0.18);
+}
+
+/* === FRONT COVER FACE === */
+.book-cover-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 2px 5px 5px 2px;
+    /* subtle inner shadow on left to simulate binding curve */
+    box-shadow: inset 6px 0 12px -4px rgba(0, 0, 0, 0.65);
+}
+
+/* Glare overlay */
+.book-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    mix-blend-mode: overlay;
+    z-index: 10;
+}
+
+
+/* --- 3D Book Modal Animations --- */
+
+/* Base Container - The White Edge Wrap */
+#book-modal {
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s;
+    transform-origin: center center;
+}
+
+#book-modal.closed {
+    /* When closed, visually scale down slightly and rotate */
+    transform: rotateX(10deg) rotateY(15deg) scale(0.6) translateZ(-100px);
+}
+
+#book-modal.open {
+    /* When open, face forward */
+    transform: rotateX(0deg) rotateY(0deg) scale(1) translateZ(0);
+}
+
+/* The Flapping Cover (Left Page) */
+.book-cover {
+    transform-style: preserve-3d;
+    z-index: 30;
+    transform-origin: left center;
+    /* Flaps from the left edge */
+}
+
+.book-cover.closed {
+    /* Sits flat over the left pane when closed */
+    transform: rotateY(0deg) translateZ(2px);
+    border-radius: 0.25rem;
+}
+
+.book-cover.open {
+    /* Swings open fully to the left */
+    transform: rotateY(-180deg);
+}
+
+/* Hide backfaces to prevent flickering during 3D rotation */
+.backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+/* Spine visibility */
+.book-container.open #book-spine {
+    opacity: 1;
+}
+
+/* Status Badges */
+.status-Reading {
+    color: #fff;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: #60a5fa;
+    box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+}
+
+.status-Completed {
+    color: #fff;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #34d399;
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+}
+
+.status-Plan {
+    color: #fff;
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    border-color: #a78bfa;
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.4);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.6);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 114, 128, 0.8);
+}
+
+/* Number Input Arrows Removal */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
