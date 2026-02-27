@@ -8,7 +8,7 @@ import FilterSidebar from './components/FilterSidebar'
 import MangaGrid from './components/MangaGrid'
 import BookModal from './components/BookModal'
 import SearchMangaModal from './components/SearchMangaModal'
-import AuthPage from './components/AuthPage'
+import LandingPage from './components/LandingPage'
 
 export default function App() {
   const { user, loading: authLoading } = useAuth()
@@ -52,11 +52,10 @@ export default function App() {
     )
   }
 
-  // ── Auth gate ─────────────────────────────────────
   if (!user) {
     return (
-      <div data-theme={theme} style={{ height: '100%', width: '100%' }}>
-        <AuthPage />
+      <div data-theme="dark" style={{ height: '100%', width: '100%', overflowY: 'auto' }}>
+        <LandingPage />
       </div>
     )
   }
